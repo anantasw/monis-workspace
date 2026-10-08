@@ -14,10 +14,12 @@ const SetupStoreContext = createContext<SetupStore | null>(null);
 
 function readFromBrowser(): Setup | null {
   try {
-    const code = new URLSearchParams(window.location.search).get("s");
+    const url = new URL(window.location.href);
+    const code = url.searchParams.get("s");
     if (code !== null) {
-      // Drop ?s= so a refresh shows the user's own edits, not the shared setup again.
-      window.history.replaceState(window.history.state, "", window.location.pathname);
+      // Drop only ?s= (keep other params and the hash) so a refresh shows the user's own edits.
+      url.searchParams.delete("s");
+      window.history.replaceState(window.history.state, "", url);
       const shared = decodeSetup(code);
       if (shared) return shared;
     }
@@ -77,7 +79,6 @@ export function useSetupSelector<T>(selector: (snapshot: SetupSnapshot) => T): T
 
 export const useSetup = () => useSetupSelector((s) => s.setup);
 export const useSetupReady = () => useSetupSelector((s) => s.ready);
-export const useLastChangedId = () => useSetupSelector((s) => s.lastChangedId);
 
 export interface SetupActions {
   selectDesk: (id: string) => void;

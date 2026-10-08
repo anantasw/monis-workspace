@@ -1,6 +1,6 @@
 "use client";
 
-import type { KeyboardEvent, ReactNode, Ref } from "react";
+import { useId, type KeyboardEvent, type ReactNode, type Ref } from "react";
 import type { Phase } from "@/domain/bali-time";
 import { PRODUCT_BY_ID, type Product } from "@/domain/catalog";
 import type { Setup } from "@/domain/setup";
@@ -84,9 +84,9 @@ function Placed({
   );
 }
 
-function Draw({ product, deskWidth }: { product: Product; deskWidth?: number }) {
+function Draw({ product, deskWidth, weaveId }: { product: Product; deskWidth?: number; weaveId?: string }) {
   const D = ART[product.art].Draw;
-  return <D product={product} deskWidth={deskWidth} />;
+  return <D product={product} deskWidth={deskWidth} weaveId={weaveId} />;
 }
 
 export function Scene({
@@ -99,6 +99,8 @@ export function Scene({
   className,
   title = "Preview of your workspace",
 }: SceneProps) {
+  // Unique per SVG: the room is drawn on the builder and again on the postcard.
+  const weaveId = useId();
   const style = PHASES[phase];
   const act = interactive ? onItemClick : undefined;
   const desk = PRODUCT_BY_ID[setup.deskId];
@@ -161,7 +163,7 @@ export function Scene({
       preserveAspectRatio="xMidYMid meet"
       style={{ isolation: "isolate" }}
     >
-      <ArtDefs />
+      <ArtDefs weaveId={weaveId} />
 
       {/* Wall and floor */}
       {/* Wall and floor run past the viewBox so the room fills any frame shape. */}
@@ -179,7 +181,7 @@ export function Scene({
       <g>
         <line x1={DESK_X - 40} y1={-BLEED} x2={DESK_X - 40} y2={96} stroke={INK.navy} strokeWidth={2.5} />
         <path d={`M${DESK_X - 96} 168 Q${DESK_X - 40} 70 ${DESK_X + 16} 168 Z`} fill={INK.sun} fillOpacity={0.75} style={{ mixBlendMode: "multiply" }} transform="translate(3 2)" />
-        <path d={`M${DESK_X - 96} 168 Q${DESK_X - 40} 70 ${DESK_X + 16} 168 Z`} fill="url(#weave)" fillOpacity={0.5} stroke={INK.navy} strokeWidth={3} strokeLinejoin="round" />
+        <path d={`M${DESK_X - 96} 168 Q${DESK_X - 40} 70 ${DESK_X + 16} 168 Z`} fill={`url(#${weaveId})`} fillOpacity={0.5} stroke={INK.navy} strokeWidth={3} strokeLinejoin="round" />
       </g>
 
       {/* Louvred window with the Bali sky */}
@@ -329,7 +331,7 @@ export function Scene({
       ) : null}
       {chair ? (
         <Placed x={DESK_X + 20} y={CHAIR_Y} scale={0.8} product={chair} onActivate={act} key={`chair-${chair.id}`}>
-          <Draw product={chair} />
+          <Draw product={chair} weaveId={weaveId} />
         </Placed>
       ) : null}
 

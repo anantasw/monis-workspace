@@ -30,12 +30,12 @@ export function decodeSetup(code: string): Setup | null {
   const items: Record<string, number> = {};
   let weeks = INITIAL_SETUP.weeks;
   for (const part of rest) {
-    const week = /^w(\d{1,2})$/.exec(part);
+    const week = /^w(\d{1,4})$/.exec(part);
     if (week) {
       weeks = Number(week[1]);
       continue;
     }
-    const item = /^(.+?)(?:x(\d{1,2}))?$/.exec(part);
+    const item = /^(.+?)(?:x(\d{1,4}))?$/.exec(part);
     if (item) items[item[1]] = Number(item[2] ?? 1);
   }
   return normalizeSetup({ deskId, chairId: chair === NO_CHAIR ? null : chair, items, weeks });

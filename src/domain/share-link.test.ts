@@ -27,6 +27,15 @@ describe("share link", () => {
     });
   });
 
+  test("clamps large week and quantity numbers instead of dropping them", () => {
+    expect(decodeSetup("desk-140.chair-ergo.mon-27x100.w100")).toEqual({
+      deskId: "desk-140",
+      chairId: "chair-ergo",
+      items: { "mon-27": 3 },
+      weeks: 12,
+    });
+  });
+
   test("returns null for text that is not a share code", () => {
     expect(decodeSetup("")).toBeNull();
     expect(decodeSetup("<script>alert(1)</script>")).toBeNull();

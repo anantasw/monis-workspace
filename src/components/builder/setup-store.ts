@@ -4,8 +4,6 @@ export interface SetupSnapshot {
   setup: Setup;
   /** False until the browser has restored the share link or the saved setup. */
   ready: boolean;
-  /** Product that changed last, so the room can animate it. */
-  lastChangedId: string | null;
 }
 
 export interface DispatchResult {
@@ -23,18 +21,7 @@ export interface SetupStore {
 }
 
 /** What the server renders: the default setup, not ready yet. */
-export const SERVER_SNAPSHOT: SetupSnapshot = { setup: INITIAL_SETUP, ready: false, lastChangedId: null };
-
-function changedId(action: SetupAction): string | null {
-  switch (action.type) {
-    case "SELECT_DESK":
-    case "SELECT_CHAIR":
-    case "ADD_ITEM":
-      return action.id;
-    default:
-      return null;
-  }
-}
+export const SERVER_SNAPSHOT: SetupSnapshot = { setup: INITIAL_SETUP, ready: false };
 
 /**
  * A tiny external store (no library). Components read it with useSyncExternalStore and a
@@ -59,7 +46,7 @@ export function createSetupStore(): SetupStore {
       const after = setupReducer(before, action);
       const changed = after !== before;
       if (changed) {
-        snapshot = { ...snapshot, setup: after, lastChangedId: changedId(action) };
+        snapshot = { ...snapshot, setup: after };
         emit();
       }
       return { before, after, changed };
@@ -68,7 +55,6 @@ export function createSetupStore(): SetupStore {
       snapshot = {
         setup: restored ? setupReducer(snapshot.setup, { type: "REPLACE", setup: restored }) : snapshot.setup,
         ready: true,
-        lastChangedId: null,
       };
       emit();
     },

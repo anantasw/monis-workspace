@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { formatUsd, pluralize } from "@/domain/format";
 import { MAX_WEEKS, priceSetup } from "@/domain/setup";
 import { onRovingKeyDown } from "@/components/ui/roving-focus";
@@ -12,14 +12,16 @@ const WEEK_OPTIONS = Array.from({ length: MAX_WEEKS }, (_, i) => i + 1);
 export function WeekPicker() {
   const { weeks } = useSetup();
   const { setWeeks } = useSetupActions();
+  // The picker is rendered twice on the builder (phone tray and desktop ticket), so the id must be unique.
+  const labelId = useId();
   return (
     <div>
-      <p id="weeks-label" className="mb-2 text-sm font-semibold text-ink">
+      <p id={labelId} className="mb-2 text-sm font-semibold text-ink">
         Rent for <span className="tabular-nums">{pluralize(weeks, "week")}</span>
       </p>
       <div
         role="radiogroup"
-        aria-labelledby="weeks-label"
+        aria-labelledby={labelId}
         className="grid grid-cols-6 gap-1.5 lg:grid-cols-12 lg:gap-1"
         onKeyDown={(e) => onRovingKeyDown(e, '[role="radio"]')}
       >
@@ -47,6 +49,13 @@ export function WeekPicker() {
 export function CopyLinkButton({ className = "" }: { className?: string }) {
   const { shareUrl } = useSetupActions();
   const [copied, setCopied] = useState(false);
+
+  useEffect(() => {
+    if (!copied) return;
+    const timer = window.setTimeout(() => setCopied(false), 2000);
+    return () => window.clearTimeout(timer);
+  }, [copied]);
+
   return (
     <button
       type="button"
@@ -55,7 +64,6 @@ export function CopyLinkButton({ className = "" }: { className?: string }) {
         try {
           await navigator.clipboard.writeText(url);
           setCopied(true);
-          window.setTimeout(() => setCopied(false), 2000);
         } catch {
           window.prompt("Copy this link", url);
         }

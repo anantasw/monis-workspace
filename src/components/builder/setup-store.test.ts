@@ -17,7 +17,7 @@ describe("setup store", () => {
     expect(store.dispatch({ type: "ADD_ITEM", id: "lamp-1s" }).changed).toBe(true);
     expect(store.dispatch({ type: "ADD_ITEM", id: "lamp-1s" }).changed).toBe(false); // max 1 lamp
     expect(listener).toHaveBeenCalledTimes(1);
-    expect(store.getSnapshot().lastChangedId).toBe("lamp-1s");
+    expect(store.getSnapshot().setup.items).toEqual({ "lamp-1s": 1 });
 
     unsubscribe();
     store.dispatch({ type: "SET_WEEKS", weeks: 9 });

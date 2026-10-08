@@ -45,12 +45,18 @@ export const webhookSink: RentRequestSink = {
     );
     if (!env.RENT_REQUEST_WEBHOOK_URL) return;
 
-    const res = await fetch(env.RENT_REQUEST_WEBHOOK_URL, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(toPayload(record)),
-      signal: AbortSignal.timeout(8000),
-    });
-    if (!res.ok) console.error(`[rent-request] ${record.reference} webhook failed with HTTP ${res.status}`);
+    try {
+      const res = await fetch(env.RENT_REQUEST_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify(toPayload(record)),
+        signal: AbortSignal.timeout(8000),
+      });
+      if (!res.ok) console.error(`[rent-request] ${record.reference} webhook failed with HTTP ${res.status}`);
+    } catch (error) {
+      // Network error or the 8 s timeout. Log the reference so the request can be found and sent again.
+      const reason = error instanceof Error ? error.name : "unknown error";
+      console.error(`[rent-request] ${record.reference} webhook not reached (${reason})`);
+    }
   },
 };

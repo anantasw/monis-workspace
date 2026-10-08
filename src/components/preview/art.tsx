@@ -1,4 +1,4 @@
-import { cloneElement, type ReactElement, type ReactNode, type SVGProps } from "react";
+import { cloneElement, memo, useId, type ReactElement, type ReactNode, type SVGProps } from "react";
 import type { ArtKey, Product } from "@/domain/catalog";
 
 // Every item is drawn the riso way: a paper knockout, an ink fill printed slightly off-register
@@ -33,7 +33,12 @@ export function Riso({ parts, details, offset = 3 }: { parts: Part[]; details?: 
   );
 }
 
-export type ArtProps = { product?: Product; deskWidth?: number };
+export interface ArtProps {
+  product?: Product;
+  deskWidth?: number;
+  /** Id of the weave <pattern> in the same SVG (ids must be unique on the page). */
+  weaveId?: string;
+}
 export type ArtDef = { w: (p: ArtProps) => number; h: (p: ArtProps) => number; Draw: (p: ArtProps) => ReactElement };
 
 export const DESK_TOP = 170;
@@ -149,7 +154,7 @@ function TaskChair() {
   );
 }
 
-function RattanChair() {
+function RattanChair({ weaveId }: ArtProps) {
   return (
     <Riso
       parts={[
@@ -160,7 +165,7 @@ function RattanChair() {
       ]}
       details={
         <>
-          <path d="M-88 -128 V-232 a88 72 0 0 1 176 0 V-128" fill="url(#weave)" stroke="none" opacity={0.55} />
+          <path d="M-88 -128 V-232 a88 72 0 0 1 176 0 V-128" fill={`url(#${weaveId})`} stroke="none" opacity={0.55} />
           <path d="M-64 -230 a64 52 0 0 1 128 0 V-150 h-128 z" strokeWidth={2} opacity={0.6} />
         </>
       }
@@ -401,30 +406,25 @@ export const ART: Record<ArtKey, ArtDef> = {
   purifier: { w: () => 92, h: () => 230, Draw: Purifier },
 };
 
-/** Shared <defs> for the weave pattern and print grain. Render once per SVG. */
-export function ArtDefs({ grainId }: { grainId?: string }) {
+/** Shared <defs> (the rattan weave pattern). Render once per SVG with an id from useId(). */
+export function ArtDefs({ weaveId }: { weaveId: string }) {
   return (
     <defs>
-      <pattern id="weave" width="12" height="12" patternUnits="userSpaceOnUse">
+      <pattern id={weaveId} width="12" height="12" patternUnits="userSpaceOnUse">
         <path d="M0 6 L6 0 L12 6 L6 12 Z" fill="none" stroke="var(--color-brand)" strokeWidth="1.2" />
       </pattern>
-      {grainId ? (
-        <filter id={grainId} x="0" y="0" width="100%" height="100%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch" />
-          <feColorMatrix type="saturate" values="0" />
-          <feComponentTransfer>
-            <feFuncA type="table" tableValues="0 0.55" />
-          </feComponentTransfer>
-        </filter>
-      ) : null}
     </defs>
   );
 }
 
-/** Small standalone drawing of one product, used on stickers. */
-export function ProductArt({ product, className }: { product: Product; className?: string }) {
+/**
+ * Small standalone drawing of one product, used on stickers. Memoised: it depends only on the
+ * product, so it does not need to re-render when the setup changes.
+ */
+export const ProductArt = memo(function ProductArt({ product, className }: { product: Product; className?: string }) {
+  const weaveId = useId();
   const def = ART[product.art];
-  const props: ArtProps = { product, deskWidth: product.art === "riser" ? 200 : undefined };
+  const props: ArtProps = { product, deskWidth: product.art === "riser" ? 200 : undefined, weaveId };
   if (product.category === "desk") props.deskWidth = deskWidthFor(product) * 0.7;
   const w = def.w(props);
   const h = def.h(props);
@@ -437,8 +437,8 @@ export function ProductArt({ product, className }: { product: Product; className
       aria-hidden="true"
       style={{ isolation: "isolate" }}
     >
-      <ArtDefs />
+      <ArtDefs weaveId={weaveId} />
       <Draw {...props} />
     </svg>
   );
-}
+});
