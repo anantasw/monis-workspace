@@ -1,7 +1,9 @@
 @AGENTS.md
+@docs/CONVENTIONS.md
 
 # Project rules
 
+- Code conventions: `docs/CONVENTIONS.md` (imported above). Follow every **Must** rule; run its review checklist before you finish.
 - PRD: `docs/PRD.md` (read it before building a feature, and update it when scope or behaviour changes).
 - Use the design tokens from `src/app/globals.css` (`bg-brand`, `text-ink-muted`, `bg-paper`, `text-lagoon`, ...). No raw hex colours in components; in SVG use `var(--color-*)`.
 - Money is stored as integer cents.

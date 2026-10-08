@@ -371,6 +371,7 @@ CONTEXT.md                   # domain glossary
 DESIGN.md                    # design system ("Riso Villa")
 docs/PRD.md                  # this document
 docs/adr/                    # architecture decision records
+docs/CONVENTIONS.md          # code conventions and review checklist
 src/
   instrumentation.ts         # loads env validation at server start
   app/
@@ -499,3 +500,4 @@ src/
 | 2026-10-09 | All functionality built, following the team's Next.js best-practice checklist: domain layer in `src/domain/` written test-first (Vitest, 60 tests); Zod at every trust boundary (share link, versioned storage with v1 migration, form, env); external store with selectors instead of Context state; Server Action with field messages, honeypot and `after()` webhook delivery; new FR-12 Surprise me and FR-13 Undo / Start over; postcard PNG download; WhatsApp links; roving focus and skip link; error, 404 and Open Graph pages; `CONTEXT.md` and 4 ADRs. Presets no longer ask "tap again"; they load at once with Undo. |
 | 2026-10-09 | Manual end-to-end run on the production build (9 scenarios). 10 findings, 9 fixed and retested: focus loss (E2E-1, 4, 5), toast timing (E2E-2), silent summary "+" (E2E-3), phone touch targets and layout (E2E-6, 7, 10), share link lost on refresh (E2E-8). |
 | 2026-10-09 | Default Next.js favicon replaced with the official monis.rent icons; the official monis wordmark (`src/components/ui/monis-logo.tsx`) is used in the header, the Open Graph image and the postcard PNG. |
+| 2026-10-09 | Added `docs/CONVENTIONS.md`: code conventions and a review checklist for the code as built, imported by `CLAUDE.md`. |
