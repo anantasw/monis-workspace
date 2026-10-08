@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* Design tokens. Source of truth: DESIGN.md ("Riso Villa"). */
+@theme {
+  --color-brand: #15252e;
+  --color-brand-hover: #22394a;
+  --color-paper: #f9f2ea;
+  --color-surface: #ffffff;
+  --color-ink: #15252e;
+  --color-ink-muted: #5b6770;
+  --color-line: #e5e7eb;
+  --color-lagoon: #1f8a8a;
+  --color-sun: #f2c230;
+  --color-frangipani: #e8708f;
+  --color-leaf: #2f6b4a;
+  --color-danger: #b42318;
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-bricolage), var(--font-inter), sans-serif;
+  --font-note: var(--font-gochi), cursive;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --radius-control: 6px;
+  --radius-ticket: 12px;
+
+  --shadow-lift: 0 8px 24px rgb(21 37 46 / 0.12);
+
+  --ease-drop: cubic-bezier(0.34, 1.4, 0.64, 1);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-surface);
+  color: var(--color-ink);
+}
+
+/* Native select with our own chevron, so the arrow has the same room on the right as the text on the left. */
+.select {
+  appearance: none;
+  padding-right: 2.25rem;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 6l4 4 4-4' fill='none' stroke='%235b6770' stroke-width='1.75' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.75rem center;
+  background-size: 1rem;
+}
+
+/* Scene */
+.font-note {
+  font-family: var(--font-note);
+}
+
+.placed {
+  transition: transform 260ms ease-in-out;
+}
+
+.drop-in {
+  animation: drop-in 420ms var(--ease-drop) both;
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+
+@keyframes drop-in {
+  from {
+    opacity: 0;
+    transform: translateY(-48px) scale(0.96);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.phase-fade {
+  transition:
+    fill 600ms ease-in-out,
+    fill-opacity 600ms ease-in-out;
+}
+
+.scene-item {
+  cursor: pointer;
+  outline: none;
+}
+
+.scene-item:hover {
+  filter: brightness(1.04);
+}
+
+.scene-item:focus-visible {
+  outline: 3px solid var(--color-brand);
+  outline-offset: 4px;
+}
+
+.palm {
+  transform-origin: 150px 370px;
+  animation: palm-sway 6s ease-in-out infinite alternate;
+}
+
+@keyframes palm-sway {
+  to {
+    transform: rotate(1.6deg);
+  }
+}
+
+/* Print grain over the room: a tiled noise image, cheaper than an SVG filter on a big area. */
+.riso-grain {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+/* Stickers: the white die-cut edge follows the item's own shape. */
+.sticker-art {
+  filter: drop-shadow(2px 0 0 #fff) drop-shadow(-2px 0 0 #fff) drop-shadow(0 2px 0 #fff)
+    drop-shadow(0 -2px 0 #fff) drop-shadow(0 4px 4px rgb(21 37 46 / 0.18));
+  transition: transform 180ms ease-out;
+}
+
+.sticker:hover .sticker-art,
+.sticker:focus-visible .sticker-art {
+  transform: translateY(-2px) rotate(-1.5deg);
+}
+
+/* Rental ticket with a perforated top edge. */
+.ticket {
+  --hole: 6px;
+  -webkit-mask:
+    radial-gradient(circle var(--hole) at 50% 0, #0000 98%, #000) 0 0 / 18px 100% repeat-x;
+  mask:
+    radial-gradient(circle var(--hole) at 50% 0, #0000 98%, #000) 0 0 / 18px 100% repeat-x;
+}
+
+.toast-in {
+  animation: toast-in 220ms ease-out both;
+}
+
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+}
+
+.price-bump {
+  animation: price-bump 260ms ease-out;
+}
+
+@keyframes price-bump {
+  40% {
+    transform: translateY(-3px);
+    color: var(--color-lagoon);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
