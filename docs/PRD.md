@@ -1,6 +1,6 @@
 # PRD: Monis Workspace Builder
 
-Last updated: 2026-10-09 · Owner: Abhisena · Status: all features built and tested locally; not yet deployed
+Last updated: 2026-10-09 · Owner: Abhisena · Status: live at https://monis-workspace-green.vercel.app/
 
 ## Human-friendly overview
 
@@ -73,8 +73,8 @@ The main user is a remote worker who just arrived in Bali and needs a working de
 | AC-3 | A user can add accessories (monitors, lamps, plants, etc.) | FR-4, FR-5 | Done |
 | AC-4 | The workspace preview updates visually as items are added or changed | FR-6, FR-11 | Done |
 | AC-5 | There is a summary or "checkout" view showing the selected setup | FR-8, FR-9 | Done |
-| AC-6 | The app is deployed and accessible via a public URL | NFR-7, Vercel | **Not done** |
-| AC-7 | The code is on GitHub with desent-bot added as a collaborator | Delivery checklist | **Not done** |
+| AC-6 | The app is deployed and accessible via a public URL | NFR-7, Vercel | Done: https://monis-workspace-green.vercel.app/ |
+| AC-7 | The code is on GitHub with desent-bot added as a collaborator | Delivery checklist | Done: github.com/anantasw/monis-workspace, desent-bot invited (write) |
 
 **Stretch ("surprise us")**
 
@@ -421,7 +421,7 @@ src/
 | NFR-4 | Last 2 versions of Chrome, Safari (incl. iOS), Firefox, Edge | Chrome checked (production build); others not yet |
 | NFR-5 | `pnpm lint`, `pnpm typecheck`, `pnpm test` and `pnpm build` pass with zero errors | Passing (60 tests) |
 | NFR-6 | Title template, description, Open Graph image | Done |
-| NFR-7 | Vercel, auto-deploy from `main`, preview deploys for pull requests | Not done |
+| NFR-7 | Vercel, auto-deploy from `main`, preview deploys for pull requests | Done (production deploy of `ab49963` checked) |
 | NFR-8 | Rent form data is not stored and not logged; no third-party trackers | Done |
 | NFR-9 | Environment variables validated at start | Done |
 
@@ -466,11 +466,11 @@ src/
 
 **Delivery checklist**
 
-- [ ] Commit the work and create the GitHub repository
-- [ ] Add desent-bot as a collaborator (GitHub › Settings › Collaborators)
-- [ ] Connect the repo to Vercel; set the two environment variables if the client gives them
-- [ ] README: live URL
-- [ ] All 7 acceptance criteria checked on the production URL
+- [x] Commit the work and create the GitHub repository
+- [x] Add desent-bot as a collaborator (invitation sent; desent-bot must accept it)
+- [x] Connect the repo to Vercel (the two optional environment variables are not set yet)
+- [x] README: live URL
+- [x] All 7 acceptance criteria checked on the production URL (9 Oct 2026: 3 desks, 3 chairs, items added, room updates, summary and form load)
 
 **Risks**
 
@@ -503,3 +503,4 @@ src/
 | 2026-10-09 | Added `docs/CONVENTIONS.md`: code conventions and a review checklist for the code as built, imported by `CLAUDE.md`. |
 | 2026-10-09 | Added a "Definition of done" to `CLAUDE.md` (checks, review against `docs/CONVENTIONS.md`, fix, docs, report) and a Stop hook (`.claude/hooks/check-on-stop.sh`) that runs lint, typecheck and tests when code changed. |
 | 2026-10-09 | First review under the Definition of done: 10 findings, all fixed (download button keeps focus, webhook errors logged with the reference, unique SVG pattern and label ids, `?s=` removal keeps other params, large share-link numbers clamped, dead code removed, timer cleanup, sticker art memoised). 61 tests. |
+| 2026-10-09 | Deployed to Vercel (https://monis-workspace-green.vercel.app/); desent-bot invited to the GitHub repo. AC-6 and AC-7 done. |

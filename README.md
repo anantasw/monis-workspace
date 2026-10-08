@@ -2,7 +2,7 @@
 
 An interactive tool for [monis.rent](https://www.monis.rent/): design your Bali workspace in a picture of a real room (desk, chair, screens, lamp, plants, a coffee corner), see the weekly price change as you go, then send a rent request.
 
-- Live URL: _TBD (Vercel)_
+- Live URL: https://monis-workspace-green.vercel.app/
 - Product requirements: [docs/PRD.md](docs/PRD.md)
 - Design system: [DESIGN.md](DESIGN.md)
 - Domain glossary: [CONTEXT.md](CONTEXT.md)
