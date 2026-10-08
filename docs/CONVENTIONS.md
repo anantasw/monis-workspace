@@ -161,6 +161,8 @@ Run before every merge:
 pnpm lint && pnpm typecheck && pnpm test && pnpm build
 ```
 
+A Stop hook (`.claude/hooks/check-on-stop.sh`, set up in `.claude/settings.json`) runs lint, typecheck and tests automatically whenever an AI coding session stops with changed code. It blocks the stop when a check fails.
+
 Then check:
 
 - [ ] No `any`, `!`, or unexplained `as`; no `enum`; unions end with a `never` check.
